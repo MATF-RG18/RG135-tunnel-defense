@@ -10,12 +10,22 @@ static float window_width, window_height;
 static float camera_angle=PI;
 static int camera_position=2;
 static int movement_direction=0;
-static int projectile_times[]={0,0,0}; //Proteklo vreme za sva 3 projektila
-static int projectile_active[]={0,0,0}; //Aktivnost svia 3 projektila
+static float projectile_times[]={0,0,0}; //Proteklo vreme za sva 3 projektila
+static int projectile_active[]={0,0,0};//Aktivnost sva 3 projektila
+static int projectile_position[]={0,0,0};//Tunel u kojem je ispaljen projektil
+static const float projectile_limits[]={-1,1,0,2,-1,31, -1,31,0,2,-1,1, -1,1,0,2,-31,1, -31,1,0,2,-1,1}; //Limiti projektila za sva 4 tunela
 static float projectile_angles[]={0,0,0,0,0,0}; //x i y uglovi za sva 3 projektila
+static float projectile_coordinates[]={0,0,0, 0,0,0, 0,0,0}; //x, y, z kooridante projektila
 static int projectile_number=0;
-
+static float enemy_times[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+static int enemy_active[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+static int enemy_position[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
+static float enemy_coordinates[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 static void movement_timer(int id);
+static void enemy_timer(int id);
+static void wave1();
+static int wave_time=0;
+
 void build_tunnel()
 {
     
@@ -31,7 +41,7 @@ void build_tunnel()
     glMaterialf(GL_FRONT, GL_SHININESS, shininess);
     
     /* Pravljenje tunela */
-    for(int i=1;i<=31;i++)
+    for(int i=1;i<=30;i++)
     {
         /* Prednji tunel */
         glBegin(GL_POLYGON);
@@ -259,34 +269,315 @@ void draw_map()
         glEnd();
     }
 
+    /* Crtaju se neprijatelji na mapi */
+    float enemy_x;
+    float enemy_z;
+    glColor4f(0,0,0,1);
+    glPointSize(10);
+    glBegin(GL_POINTS);
+    for(int i=0;i<20;i++)
+    {
+        if(enemy_active[i])
+        {
+            /* Pronalaze se koordinate i skaliraju prema mapi */
+            switch(enemy_position[i])
+            {
+                case 0:
+                    enemy_x=enemy_coordinates[i*2];
+                    enemy_z=-31+enemy_times[i];
+                    break;
+                case 1:
+                    enemy_x=31-enemy_times[i];
+                    enemy_z=enemy_coordinates[i*2];
+                    break;
+                case 2:
+                    enemy_x=enemy_coordinates[i*2];
+                    enemy_z=31-enemy_times[i];
+                    break;
+                case 3:
+                    enemy_x=-31+enemy_times[i];
+                    enemy_z=enemy_coordinates[i*2];
+                    break;
+            }
+            enemy_x=enemy_x*map_radius/31;
+            enemy_z=enemy_z*map_radius/31;
+            glVertex3f(map_center+enemy_x,map_center+enemy_z,0);
+        }
+    }
+    glEnd();
+    
+    /* Vracaju se prethodna podesavanja */
     glPopMatrix();
     glEnable(GL_LIGHTING);
     glEnable(GL_DEPTH_TEST);
+    
+}
+
+static void wave_timer(int id)
+{
+    wave_time+=1;
+    wave1();
+    glutTimerFunc(TIMER_INTERVAL, wave_timer, TIMER_ID);
+}
+
+static void wave1()
+{
+    int number;
+    if(wave_time==100)
+    {
+        for(int i=0;i<20;i++)
+        {
+            if(enemy_active[i]==0)
+            {
+                number=i;
+                break;
+            }
+        }
+        enemy_active[number]=1;
+        enemy_position[number]=2;
+        enemy_coordinates[number*2]=-0.7;
+        enemy_coordinates[number*2+1]=1.2;
+        glutTimerFunc(TIMER_INTERVAL, enemy_timer, number);
+    }
+    
+    if(wave_time==100)
+    {
+        for(int i=0;i<20;i++)
+        {
+            if(enemy_active[i]==0)
+            {
+                number=i;
+                break;
+            }
+        }
+        enemy_active[number]=1;
+        enemy_position[number]=0;
+        enemy_coordinates[number*2]=0.7;
+        enemy_coordinates[number*2+1]=1.4;
+        glutTimerFunc(TIMER_INTERVAL, enemy_timer, number);
+    }
+    
+    if(wave_time==300)
+    {
+        for(int i=0;i<20;i++)
+        {
+            if(enemy_active[i]==0)
+            {
+                number=i;
+                break;
+            }
+        }
+        enemy_active[number]=1;
+        enemy_position[number]=1;
+        enemy_coordinates[number*2]=0.7;
+        enemy_coordinates[number*2+1]=0.3;
+        glutTimerFunc(TIMER_INTERVAL, enemy_timer, number);
+    }
+    
+    if(wave_time==500)
+    {
+        for(int i=0;i<20;i++)
+        {
+            if(enemy_active[i]==0)
+            {
+                number=i;
+                break;
+            }
+        }
+        enemy_active[number]=1;
+        enemy_position[number]=1;
+        enemy_coordinates[number*2]=0.7;
+        enemy_coordinates[number*2+1]=0.3;
+        glutTimerFunc(TIMER_INTERVAL, enemy_timer, number);
+    }
+    
+    if(wave_time==600)
+    {
+        for(int i=0;i<20;i++)
+        {
+            if(enemy_active[i]==0)
+            {
+                number=i;
+                break;
+            }
+        }
+        enemy_active[number]=1;
+        enemy_position[number]=3;
+        enemy_coordinates[number*2]=0.7;
+        enemy_coordinates[number*2+1]=0.3;
+        glutTimerFunc(TIMER_INTERVAL, enemy_timer, number);
+    }
+    
+    if(wave_time==700)
+    {
+        for(int i=0;i<20;i++)
+        {
+            if(enemy_active[i]==0)
+            {
+                number=i;
+                break;
+            }
+        }
+        enemy_active[number]=1;
+        enemy_position[number]=0;
+        enemy_coordinates[number*2]=0.7;
+        enemy_coordinates[number*2+1]=0.3;
+        glutTimerFunc(TIMER_INTERVAL, enemy_timer, number);
+    }
+}
+
+static void destroy_projectile(int number)
+{
+    projectile_active[number]=0;
+    projectile_times[number]=0; 
+    projectile_coordinates[number*3]=0;
+    projectile_coordinates[number*3+1]=0;
+    projectile_coordinates[number*3+2]=0; 
+    glutPostRedisplay();
+}
+
+static void spawn_enemy(int number, float local_x, float local_y)
+{
+    /* Podesavanje materijala */
+    GLfloat ambient_coeffs[] = { 0.1, 0.1, 0.1, 1 };
+    GLfloat diffuse_coeffs[] = { 0.4, 0.4, 0.4, 1 };
+    GLfloat specular_coeffs[] = { 0.1, 0.1, 0.1, 1 };
+    GLfloat shininess = 10;
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_coeffs);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_coeffs);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
+    glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+    
+    /* Izracunava se pozicija projektila u zavisnosti od pozicije u kojoj se nalazi */
+    float enemy_x, enemy_y, enemy_z;
+    switch(enemy_position[number])
+    {
+        case 0:
+            enemy_x=local_x;
+            enemy_y=local_y;
+            enemy_z=31-enemy_times[number];
+            break;
+        case 1:
+            enemy_x=31-enemy_times[number];
+            enemy_y=local_y;
+            enemy_z=local_x;;
+            break;
+        case 2:
+            enemy_x=local_x;
+            enemy_y=local_y;
+            enemy_z=-31+enemy_times[number];
+            break;
+        case 3:
+            enemy_x=-31+enemy_times[number];
+            enemy_y=local_y;
+            enemy_z=local_x;;
+            break;
+    }
+    
+    /* Provera se da li je doslo do kolizije samo ako se projektil nalazi u istom tunelu */
+    for(int i=0;i<3;i++)
+    {
+        if(projectile_position[i]==enemy_position[number])
+        {
+            if((projectile_coordinates[3*i]>(enemy_x-0.3)) &&
+                (projectile_coordinates[3*i]<(enemy_x+0.3)) &&
+                (projectile_coordinates[3*i+1]>(enemy_y-0.3)) &&
+                (projectile_coordinates[3*i+1]<(enemy_y+0.3)) &&
+                (projectile_coordinates[3*i+2]>(enemy_z-0.3)) &&
+                (projectile_coordinates[3*i+2]<(enemy_z+0.3)))
+            {
+                enemy_active[number]=0;
+                enemy_times[number]=0;
+                destroy_projectile(i);
+            }
+        }
+    }
+    glPushMatrix();
+    glTranslatef(enemy_x,enemy_y,enemy_z);
+    glutSolidCube(0.5);
+    glPopMatrix();
+}
+
+static void enemy_timer(int id)
+{
+    enemy_times[id]+=0.2;
+    if(enemy_active[id]==1)
+    {
+        glutTimerFunc(TIMER_INTERVAL, enemy_timer, id);
+        glutPostRedisplay();
+    }
 }
 
 static void projectile_timer(int id)
 {
-    if(id<0 || id>4)
+    if(id<0 || id>2)
         return;
     /* Uvecava se vreme projektila za 1, ako je i dalje aktivan, poziva se ponovo */
-    projectile_times[id]+=1;
-    
-    if(projectile_times[id]>50)
+    projectile_times[id]+=0.5;
+    if(projectile_times[id]>30)
     {
-        projectile_times[id]=0;
-        projectile_active[id]=0;
+        destroy_projectile(id);
     }
+    
     glutPostRedisplay();
     if(projectile_active[id])
         glutTimerFunc(TIMER_INTERVAL, projectile_timer, id);
 }
 
+
 static void spawn_projectile(int number)
 {
+    
+    /* Podesavanje materijala */
+    GLfloat ambient_coeffs[] = { 0.3, 0.3, 0, 1 };
+    GLfloat diffuse_coeffs[] = { 0.8, 0.8, 0, 1 };
+    GLfloat specular_coeffs[] = { 1, 1, 1, 1 };
+    GLfloat shininess = 40;
+    glMaterialfv(GL_FRONT, GL_AMBIENT, ambient_coeffs);
+    glMaterialfv(GL_FRONT, GL_DIFFUSE, diffuse_coeffs);
+    glMaterialfv(GL_FRONT, GL_SPECULAR, specular_coeffs);
+    glMaterialf(GL_FRONT, GL_SHININESS, shininess);
+    
     /* Vrsi se transformacija za projektil sa odrednjenim brojem po njegovim parametrima */
     glPushMatrix();
-    glTranslatef(projectile_times[number]*sin(projectile_angles[2*number]),1-projectile_times[number]*sin(projectile_angles[2*number+1]),projectile_times[number]*cos(projectile_angles[2*number]));
+    float projectile_x=projectile_times[number]*sin(projectile_angles[2*number]);
+    float projectile_y=1-projectile_times[number]*sin(projectile_angles[2*number+1]);
+    float projectile_z=projectile_times[number]*cos(projectile_angles[2*number]);
+    
+    /* Ako projektil stigne do nekog limita unistava se */
+    if(projectile_x-0.1<projectile_limits[projectile_position[number]*6])
+    {
+        destroy_projectile(number);
+    }
+    
+    if(projectile_x+0.1>projectile_limits[projectile_position[number]*6+1])
+    {
+        destroy_projectile(number);
+    }
+    if(projectile_y-0.1<projectile_limits[projectile_position[number]*6+2])
+    {
+        destroy_projectile(number);
+    }
+    if(projectile_y+0.1>projectile_limits[projectile_position[number]*6+3])
+    {
+        destroy_projectile(number);
+    }
+    if(projectile_z-0.1<projectile_limits[projectile_position[number]*6+4])
+    {
+        destroy_projectile(number);
+    }
+    if(projectile_z+0.1>projectile_limits[projectile_position[number]*6+5])
+    {
+        destroy_projectile(number);
+    }
+    
+    glTranslatef(projectile_x,projectile_y,projectile_z);
     glutSolidSphere(0.1,10,10);
+    
+    /* Pamte se koordinate projektila zbog kolozije sa neprijateljima */
+    projectile_coordinates[number*3]=projectile_x;
+    projectile_coordinates[number*3+1]=projectile_y;
+    projectile_coordinates[number*3+2]=projectile_z;
     glPopMatrix();
 }
 static void on_mouse(int button, int state, int x, int y)
@@ -330,6 +621,7 @@ static void on_mouse(int button, int state, int x, int y)
     if(projectile_active[projectile_number]==0)
     {
         projectile_active[projectile_number]=1;
+        projectile_position[projectile_number]=camera_position;
         glutTimerFunc(TIMER_INTERVAL, projectile_timer, projectile_number);
     }
    
@@ -368,6 +660,12 @@ static void on_keyboard(unsigned char key, int x, int y)
                 glutTimerFunc(TIMER_INTERVAL, movement_timer, TIMER_ID);
             }
             break;
+        case '1':
+            if(wave_time==0)
+            {
+                glutTimerFunc(TIMER_INTERVAL, wave_timer, TIMER_ID);
+            }
+            
     }
     
 }
@@ -433,11 +731,16 @@ static void on_display(void)
     glLightfv(GL_LIGHT0, GL_AMBIENT, light_ambient);
     glLightfv(GL_LIGHT0, GL_DIFFUSE, light_diffuse);
     glLightfv(GL_LIGHT0, GL_SPECULAR, light_specular);
-    
-    for(int i=0;i<5;i++)
+        
+    for(int i=0;i<3;i++)
     {
         if(projectile_active[i])
             spawn_projectile(i);
+    }
+    for(int i=0;i<20;i++)
+    {
+        if(enemy_active[i])
+            spawn_enemy(i, enemy_coordinates[2*i], enemy_coordinates[2*i+1]);
     }
     build_tunnel();
     draw_map();
