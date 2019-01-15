@@ -23,6 +23,7 @@ static int enemy_position[]={0,0,0,0,0,0,0,0,0,0};
 static float enemy_coordinates[]={0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0};
 
 static void wave1();
+static int wave_number=1;
 static int wave_time=0;
 static int health=3;
 static int cooldown=0;
@@ -32,6 +33,8 @@ static float special_time=0;
 static int special_active=0;
 static void destroy_projectile(int number);
 static void enemy_timer(int id);
+static int game_over_time=0;
+static int game_over_screen=0;
 
 /* Nivoi */
 void spawn_enemy_help(float x, float y, int position, int time)
@@ -56,16 +59,166 @@ void spawn_enemy_help(float x, float y, int position, int time)
 }
 static void wave1()
 {
-    spawn_enemy_help(0,1.2,1,50);
+    spawn_enemy_help(0.3,1.3,2,15);
+    spawn_enemy_help(0.5,0.8,2,30);
+    spawn_enemy_help(0.2,1.2,1,50);
+    spawn_enemy_help(-0.5,1,1,80);
+    spawn_enemy_help(0.4,1.5,1,80);
+    spawn_enemy_help(0.6,1.7,3,110);
+    spawn_enemy_help(-0.2,0.3,0,130);
+    spawn_enemy_help(-0.5,0.5,0,150);
+    spawn_enemy_help(0,1.4,1,180);
+    spawn_enemy_help(-0.7,0.3,1,185);
+}
+static void wave2()
+{
+    spawn_enemy_help(0.3,0.8,2,10);
+    spawn_enemy_help(-0.2,1.3,2,20);
+    spawn_enemy_help(0,1.2,1,30);
+    spawn_enemy_help(-0.6,0.8,1,40);
+    spawn_enemy_help(0.6,0.8,1,40);
+    spawn_enemy_help(-0.6,1.5,3,70);
+    spawn_enemy_help(0.6,1.6,3,75);
+    spawn_enemy_help(-0.5,1.3,2,89);
+    spawn_enemy_help(0.3,0.8,3,105);
+    spawn_enemy_help(0.5,0.6,0,130);
+    spawn_enemy_help(-0.5,0.4,0,150);
+    spawn_enemy_help(0.5,1.6,0,170);
+    spawn_enemy_help(-0.2,0.8,0,170);
+}
+static void wave3()
+{
+    spawn_enemy_help(-0.5,0.8,0,15);
+    spawn_enemy_help(0,1.5,0,15);
+    spawn_enemy_help(-0.5,1,2,53);
+    spawn_enemy_help(0.1,0.4,2,53);
+    spawn_enemy_help(0.7,1,2,53);
+    spawn_enemy_help(0.6,0.3,2,70);
+    spawn_enemy_help(-0.2,1.2,2,70);
+    spawn_enemy_help(0,1.2,3,100);
+    spawn_enemy_help(-0.2,1.2,0,115);
+    spawn_enemy_help(0.6,1,0,115);
+    spawn_enemy_help(-0.4,1,1,140);
+    spawn_enemy_help(0,0.8,1,150);
+    spawn_enemy_help(0.3,1,1,155);
+    spawn_enemy_help(0,1.2,1,160);
+    spawn_enemy_help(-0.3,1,1,165);
+}
+static void wave4()
+{
+    spawn_enemy_help(-0.5,0.8,0,15);
+    spawn_enemy_help(0,1.5,0,15);
+    spawn_enemy_help(0.5,0.8,0,15);
+    spawn_enemy_help(-0.5,1,1,45);
+    spawn_enemy_help(0.1,0.4,1,45);
+    spawn_enemy_help(0.7,1,1,45);
+    spawn_enemy_help(-0.3,1.5,1,48);
+    spawn_enemy_help(0.6,0.3,2,70);
+    spawn_enemy_help(-0.2,1.2,2,70);
+    spawn_enemy_help(0.2,1.6,2,80);
+    spawn_enemy_help(0,1.2,3,90);
+    spawn_enemy_help(0.5,1.2,3,100);
+    spawn_enemy_help(-0.2,1.6,3,115);
+    spawn_enemy_help(0.6,0.5,3,115);
+    spawn_enemy_help(-0.4,1.2,1,140);
+    spawn_enemy_help(0,0.4,1,150);
+    spawn_enemy_help(0.6,1,1,155);
+    spawn_enemy_help(0,1.4,1,160);
+    spawn_enemy_help(-0.7,1,1,165);
+}
+static void wave5()
+{
+    spawn_enemy_help(-0.6,1.5,3,20);
+    spawn_enemy_help(0.1,0.4,3,20);
+    spawn_enemy_help(0.7,1.5,3,20);
+    spawn_enemy_help(-0.3,1.6,2,35);
+    spawn_enemy_help(-0.3,0.3,2,35);
+    spawn_enemy_help(0.2,1,3,50);
+    spawn_enemy_help(-0.7,1.6,3,50);
+    spawn_enemy_help(0,1,0,70);
+    spawn_enemy_help(0.1,1.6,1,90);
+    spawn_enemy_help(-0.7,0.3,1,90);
+    spawn_enemy_help(0.7,1.6,1,90);
+    spawn_enemy_help(0.3,1.7,0,110);
+    spawn_enemy_help(-0.6,1.2,0,115);
+    spawn_enemy_help(0.1,1,0,120);
+    spawn_enemy_help(0.7,1,0,130);
+    spawn_enemy_help(0.1,1,3,140);
+    spawn_enemy_help(0.4,1.6,0,150);
+    spawn_enemy_help(-0.7,1.4,1,160);
+    spawn_enemy_help(0.5,1.2,1,160);
+    spawn_enemy_help(-0.5,1,1,165);
+    spawn_enemy_help(0.3,0.8,1,170);
+    spawn_enemy_help(-0.5,0.6,1,170);
+    spawn_enemy_help(0,0.4,1,175);
+    spawn_enemy_help(0.6,0.6,1,180);
+    spawn_enemy_help(-0.6,1,1,190);
 }
 
 
 /* Tajmeri */
+static void game_over_timer(int id)
+{
+    if(game_over_time<30)
+    {
+        game_over_time++;
+        glutPostRedisplay();
+        glutTimerFunc(50,game_over_timer,TIMER_ID);
+    }
+    else
+    {
+        game_over_screen=0;
+        game_over_time=0;
+        glutPostRedisplay();
+    }
+}
 static void wave_timer(int id)
 {
     wave_time+=1;
-    wave1();
-    glutTimerFunc(TIMER_INTERVAL, wave_timer, TIMER_ID);
+    switch(wave_number)
+    {
+        case 1:
+            wave1();
+            break;
+        case 2:
+            wave2();
+            break;
+        case 3:
+            wave3();
+            break;
+        case 4:
+            wave4();
+            break;
+        case 5:
+            wave5();
+            break;
+    }
+    if(wave_time==200)
+    {
+        wave_number++;
+        wave_time=0;
+    }
+    if(health<=0)
+    {
+        game_over_screen=1;
+    glutTimerFunc(50,game_over_timer,TIMER_ID);
+     wave_number=1;
+     wave_time=0;
+     for(int i=0;i<10;i++)
+     {
+         enemy_active[i]=0;
+         enemy_position[i]=0;
+         
+     }
+     cooldown=0;
+     cooldown_color=1;
+     health=3;
+     return;
+    }
+    if(wave_number==6)
+        return;
+    glutPostRedisplay();
+    glutTimerFunc(100, wave_timer, TIMER_ID);
 }
 static void enemy_timer(int id)
 {
@@ -318,11 +471,6 @@ static void draw_enemy(int number, float local_x, float local_y)
                 if(enemy_z<1)
                 {
                     health-=1;
-                    if(health==0)
-                    {
-                        wave_time=0;
-                        health=3;
-                    }
                     enemy_active[number]=0;
                     enemy_times[number]=0;
                     glutPostRedisplay();
@@ -332,11 +480,6 @@ static void draw_enemy(int number, float local_x, float local_y)
                 if(enemy_x<1)
                 {
                     health-=1;
-                    if(health==0)
-                    {
-                        wave_time=0;
-                        health=3;
-                    }
                     enemy_active[number]=0;
                     enemy_times[number]=0;
                     glutPostRedisplay();
@@ -346,11 +489,6 @@ static void draw_enemy(int number, float local_x, float local_y)
                 if(enemy_z>-1)
                 {
                     health-=1;
-                    if(health==0)
-                    {
-                        wave_time=0;
-                        health=3;
-                    }
                     enemy_active[number]=0;
                     enemy_times[number]=0;
                     glutPostRedisplay();
@@ -360,11 +498,6 @@ static void draw_enemy(int number, float local_x, float local_y)
                 if(enemy_x>-1)
                 {
                     health-=1;
-                    if(health==0)
-                    {
-                        wave_time=0;
-                        health=3;
-                    }
                     enemy_active[number]=0;
                     enemy_times[number]=0;
                     glutPostRedisplay();
@@ -390,6 +523,17 @@ void draw_hud()
     glMatrixMode(GL_MODELVIEW);
     glLoadIdentity();
     
+   /* Ako je kraj igre pojavljuje se crni ekran */
+        if(game_over_screen==1)
+     {
+     glColor4f(0,0,0,1);
+     glBegin(GL_POLYGON);
+     glVertex3f(0,0,0);
+     glVertex3f(0,window_height,0);
+     glVertex3f(window_width, window_height, 0);
+     glVertex3f(window_width,0,0);
+     glEnd();
+     }
     /* Izracunava se centar i poluprecnik kruga */
     float map_radius=window_height/10;
     float map_center=window_height/9;
@@ -471,6 +615,16 @@ void draw_hud()
     }
     glEnd();
     
+    /* Crta se progres u igri */
+    float progress=((float)wave_time/200.+wave_number-1)/5.;
+    progress*=window_width;
+    glLineWidth(10);
+    glColor4f(1-0.2*wave_number,1-0.2*wave_number,1-0.2*wave_number,1);
+    glBegin(GL_LINES);
+    glVertex3f(0,window_height-20,0);
+    glVertex3f(progress,window_height-20,0);
+    glEnd();
+    
     /* Crtaju se zivoti */
     float health_radius=map_radius/5;
     float health_y=map_center+map_radius+health_radius*2;
@@ -517,8 +671,8 @@ void draw_tunnel()
 {
     
     /* Podesavanje materijala */
-    GLfloat ambient_coeffs[] = { 0.3, 0, 0, 1 };
-    GLfloat diffuse_coeffs[] = { 0.8, 0, 0, 1 };
+    GLfloat ambient_coeffs[] = { 0.4, 0, 0, 1 };
+    GLfloat diffuse_coeffs[] = { 0.9, 0, 0, 1 };
     GLfloat specular_coeffs[] = { 1, 1, 1, 1 };
     GLfloat shininess = 40;
 
@@ -729,7 +883,6 @@ void draw_special()
                 special_active=0;
                 special_time=0;
                 glDisable(GL_LIGHT1);
-                printf("proslo \n");
             }
             break;
         case 3:
@@ -807,6 +960,13 @@ static void on_reshape(int width, int height)
 }
 static void on_keyboard(unsigned char key, int x, int y)
 {
+    if(wave_time==0 && wave_number==1)
+            {
+                cooldown=0;
+                special_active=0;
+                glutTimerFunc(100, wave_timer, TIMER_ID);
+                glutTimerFunc(1000, special_cooldown_timer, TIMER_ID);
+            }
     switch(key)
     {
         case 27:
@@ -831,19 +991,13 @@ static void on_keyboard(unsigned char key, int x, int y)
                 glutTimerFunc(TIMER_INTERVAL, movement_timer, TIMER_ID);
             }
             break;
-        case '1':
-            if(wave_time==0)
-            {
-                glutTimerFunc(TIMER_INTERVAL, wave_timer, TIMER_ID);
-            }
-            break;
         case 'f':
             if(special_active==0 && cooldown==0)
             {
                 special_active=1;
                 special_position=camera_position;
                 cooldown=20;
-                glutTimerFunc(1000, special_cooldown_timer, TIMER_ID);
+                cooldown_color=1;
                 glutTimerFunc(TIMER_INTERVAL, special_timer, TIMER_ID);
             }
             break;
@@ -868,7 +1022,7 @@ static void on_display(void)
     GLfloat light_position[] = { 0, 1, 0, 1};
     GLfloat light_ambient[] = { 0.3, 0.3, 0.3, 1 };
     GLfloat light_diffuse[] = { 0.9, 0.9, 0.9, 1 };
-    GLfloat light_specular[] = {0.5, 0.5, 0.5, 1 };
+    GLfloat light_specular[] = {0.7, 0.7, 0.7, 1 };
     
     glEnable(GL_LIGHTING);
     glEnable(GL_LIGHT0);
